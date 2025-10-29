@@ -1,0 +1,112 @@
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+html {
+    height: -webkit-fill-available;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: white;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: -webkit-fill-available;
+    background: white;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    object-fit: cover;
+    animation: fadeIn 1s ease-out;
+}    
+
+.bani {
+    width: 35vmin;
+    height: 48vmin;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    margin-top: 2vh;
+    object-fit: cover;
+    animation: slideUp 1s ease-out 0.5s both;
+    max-width: 180px;
+    max-height: 250px;
+}
+
+.logo {
+    width: 45vmin;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    margin-top: 3vh;
+    display: block;
+    animation: slideUp 1s ease-out 1s both;
+    max-width: 230px;
+}
+
+.tagline {
+    width: 50vmin;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    margin-top: 2vh;
+    max-width: 270px;
+    display: block;
+    animation: slideUp 1s ease-out 1.5s both;
+}

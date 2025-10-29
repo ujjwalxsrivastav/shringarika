@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shringarika - Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0E2439;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar - White Background */
+        .navbar {
+            width: 100%;
+            height: 200px;
+            background: white;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Hamburger Menu - Left Side */
+        .menu-icon {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-icon svg {
+            width: 52px;
+            height: 26px;
+        }
+
+        /* Logo - Center with Much Larger Size and Lower Position */
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            height: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            height: 170px;
+            width: auto;
+            max-width: 700px;
+            object-fit: contain;
+        }
+
+        /* Right Side Icons */
+        .nav-icons {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-icon {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .search-icon svg,
+        .cart-icon svg {
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Features Bar - Below Navbar */
+        .features-bar {
+            width: 100%;
+            background: #0E2439;
+            padding: 18px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .feature-item {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+        }
+
+        .feature-divider {
+            color: white;
+            font-size: 18px;
+            opacity: 0.5;
+        }
+
+        /* Main Content Area with Dark Blue Background */
+        .main-content {
+            width: 100%;
+            min-height: calc(100vh - 250px);
+            background: #0E2439;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Pink Lotus Flowers - Bottom Right - Not Cut Off */
+        .lotus-decoration {
+            position: absolute;
+            right: 0;
+            bottom: 50px;
+            width: 450px;
+            height: auto;
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* Content Section */
+        .content-wrapper {
+            padding: 60px;
+            position: relative;
+            z-index: 1;
+            min-height: 500px;
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            flex-direction: column;
+            padding: 30px;
+            box-shadow: 2px 0 20px rgba(0,0,0,0.3);
+            transition: left 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            left: 0;
+        }
+
+        .close-menu {
+            align-self: flex-end;
+            font-size: 30px;
+            cursor: pointer;
+            margin-bottom: 30px;
+            color: black;
+        }
+
+        .mobile-menu-item {
+            color: black;
+            font-size: 18px;
+            padding: 15px 0;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-item:hover {
+            color: #782446;
+            padding-left: 10px;
+        }
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 1024px) {
+            .navbar {
+                height: 160px;
+                padding: 0 40px;
+            }
+
+            .logo-container {
+                height: 130px;
+            }
+
+            .logo-container img {
+                height: 130px;
+                max-width: 500px;
+            }
+
+            .features-bar {
+                padding: 15px 40px;
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .feature-item {
+                font-size: 16px;
+            }
+
+            .lotus-decoration {
+                width: 350px;
+                bottom: 30px;
+            }
+
+            .content-wrapper {
+                padding: 40px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .navbar {
+                height: 110px;
+                padding: 0 20px;
+            }
+
+            .logo-container {
+                height: 80px;
+            }
+
+            .logo-container img {
+                height: 80px;
+                max-width: 320px;
+            }
+
+            .menu-icon svg {
+                width: 35px;
+                height: 18px;
+            }
+
+            .search-icon svg,
+            .cart-icon svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .nav-icons {
+                gap: 15px;
+            }
+
+            .features-bar {
+                padding: 12px 20px;
+                gap: 15px;
+            }
+
+            .feature-item {
+                font-size: 14px;
+            }
+
+            .feature-divider {
+                display: none;
+            }
+
+            .lotus-decoration {
+                width: 280px;
+                bottom: 20px;
+            }
+
+            .content-wrapper {
+                padding: 30px 20px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .navbar {
+                height: 90px;
+                padding: 0 15px;
+            }
+
+            .logo-container {
+                height: 60px;
+            }
+
+            .logo-container img {
+                height: 60px;
+                max-width: 220px;
+            }
+
+            .menu-icon svg {
+                width: 28px;
+                height: 15px;
+            }
+
+            .search-icon svg,
+            .cart-icon svg {
+                width: 28px;
+                height: 28px;
+            }
+
+            .features-bar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            .feature-item {
+                font-size: 12px;
+            }
+
+            .lotus-decoration {
+                width: 200px;
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <!-- Mobile Menu Sidebar -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="close-menu" id="closeMenu">&times;</div>
+        <div class="mobile-menu-item" onclick="navigate('home')">Home</div>
+        <div class="mobile-menu-item" onclick="navigate('shop')">Shop</div>
+        <div class="mobile-menu-item" onclick="navigate('categories')">Categories</div>
+        <div class="mobile-menu-item" onclick="navigate('about')">About Us</div>
+        <div class="mobile-menu-item" onclick="navigate('contact')">Contact</div>
+        <div class="mobile-menu-item" onclick="navigate('account')">My Account</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <!-- Hamburger Menu - Left -->
+        <div class="menu-icon" id="menuBtn">
+            <svg width="52" height="26" viewBox="0 0 52 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.71429 0H22.2857C23.2708 0 24.2155 0.273928 24.9121 0.761522C25.6087 1.24912 26 1.91044 26 2.6C26 3.28956 25.6087 3.95088 24.9121 4.43848C24.2155 4.92607 23.2708 5.2 22.2857 5.2H3.71429C2.7292 5.2 1.78445 4.92607 1.08789 4.43848C0.391325 3.95088 0 3.28956 0 2.6C0 1.91044 0.391325 1.24912 1.08789 0.761522C1.78445 0.273928 2.7292 0 3.71429 0ZM29.7143 20.8H48.2857C49.2708 20.8 50.2155 21.0739 50.9121 21.5615C51.6087 22.0491 52 22.7104 52 23.4C52 24.0896 51.6087 24.7509 50.9121 25.2385C50.2155 25.7261 49.2708 26 48.2857 26H29.7143C28.7292 26 27.7845 25.7261 27.0879 25.2385C26.3913 24.7509 26 24.0896 26 23.4C26 22.7104 26.3913 22.0491 27.0879 21.5615C27.7845 21.0739 28.7292 20.8 29.7143 20.8ZM3.71429 10.4H48.2857C49.2708 10.4 50.2155 10.6739 50.9121 11.1615C51.6087 11.6491 52 12.3104 52 13C52 13.6896 51.6087 14.3509 50.9121 14.8385C50.2155 15.3261 49.2708 15.6 48.2857 15.6H3.71429C2.7292 15.6 1.78445 15.3261 1.08789 14.8385C0.391325 14.3509 0 13.6896 0 13C0 12.3104 0.391325 11.6491 1.08789 11.1615C1.78445 10.6739 2.7292 10.4 3.71429 10.4Z" fill="black"/>
+            </svg>
+        </div>
+
+        <!-- Logo - Center with Larger Size and Perfect Vertical Center -->
+        <div class="logo-container">
+            <img src="whatsim.png" alt="Shringarika Logo">
+        </div>
+
+        <!-- Right Icons -->
+        <div class="nav-icons">
+            <!-- Search Icon -->
+            <div class="nav-icon search-icon" id="searchBtn">
+                <svg width="61" height="61" viewBox="0 0 61 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="10" stroke="black" stroke-width="3" fill="none"/>
+                    <line x1="31" y1="31" x2="42" y2="42" stroke="black" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <!-- Cart Icon -->
+            <div class="nav-icon cart-icon" id="cartBtn">
+                <svg width="61" height="61" viewBox="0 0 61 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M43.2083 45.75C44.5565 45.75 45.8494 46.2856 46.8027 47.2389C47.7561 48.1922 48.2916 49.4851 48.2916 50.8333C48.2916 52.1815 47.7561 53.4745 46.8027 54.4278C45.8494 55.3811 44.5565 55.9167 43.2083 55.9167C41.8601 55.9167 40.5671 55.3811 39.6138 54.4278C38.6605 53.4745 38.125 52.1815 38.125 50.8333C38.125 48.0121 40.387 45.75 43.2083 45.75ZM2.54163 5.08334H10.8529L13.242 10.1667H50.8333C51.5074 10.1667 52.1539 10.4345 52.6305 10.9111C53.1072 11.3878 53.375 12.0342 53.375 12.7083C53.375 13.1404 53.2479 13.5725 53.07 13.9792L43.9708 30.4238C43.1066 31.9742 41.4291 33.0417 39.5229 33.0417H20.5875L18.3 37.1846L18.2237 37.4896C18.2237 37.6581 18.2907 37.8197 18.4098 37.9389C18.529 38.0581 18.6906 38.125 18.8591 38.125H48.2916V43.2083H17.7916C16.4434 43.2083 15.1505 42.6728 14.1972 41.7195C13.2439 40.7661 12.7083 39.4732 12.7083 38.125C12.7083 37.2354 12.937 36.3967 13.3183 35.685L16.775 29.4579L7.62496 10.1667H2.54163V5.08334ZM17.7916 45.75C19.1398 45.75 20.4328 46.2856 21.3861 47.2389C22.3394 48.1922 22.875 49.4851 22.875 50.8333C22.875 52.1815 22.3394 53.4745 21.3861 54.4278C20.4328 55.3811 19.1398 55.9167 17.7916 55.9167C16.4434 55.9167 15.1505 55.3811 14.1972 54.4278C13.2439 53.4745 12.7083 52.1815 12.7083 50.8333C12.7083 48.0121 14.9704 45.75 17.7916 45.75ZM40.6666 27.9583L47.7325 15.25H15.6058L21.6041 27.9583H40.6666Z" fill="black"/>
+                </svg>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Features Bar -->
+    <div class="features-bar">
+        <div class="feature-item">Artisanal Craftsmanship</div>
+        <div class="feature-divider">|</div>
+        <div class="feature-item">24/7 Customer Support</div>
+        <div class="feature-divider">|</div>
+        <div class="feature-item">Handcrafted in India</div>
+        <div class="feature-divider">|</div>
+        <div class="feature-item">Secure Payments</div>
+    </div>
+
+    <!-- Main Content with Dark Background -->
+    <main class="main-content">
+        <!-- Pink Lotus Decoration - Not Cut Off -->
+        <img src="sidewalalotus.png" alt="Lotus Decoration" class="lotus-decoration">
+
+        <!-- Content Area -->
+        <div class="content-wrapper">
+            <!-- Your content goes here -->
+            <!-- Product listings, hero banners, etc. -->
+        </div>
+    </main>
+
+    <script>
+        // Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMenu = document.getElementById('closeMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.add('active');
+            menuOverlay.classList.add('active');
+        });
+
+        closeMenu.addEventListener('click', function() {
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+
+        menuOverlay.addEventListener('click', function() {
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+
+        // Search Button
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            console.log('Search clicked');
+            // Add search modal or redirect to search page
+        });
+
+        // Cart Button
+        document.getElementById('cartBtn').addEventListener('click', function() {
+            console.log('Cart clicked');
+            // window.location.href = 'cart.html';
+        });
+
+        // Navigation function
+        function navigate(page) {
+            console.log('Navigating to:', page);
+            mobileMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            // Add your navigation logic here
+            // Example: window.location.href = page + '.html';
+        }
+    </script>
+</body>
+</html>

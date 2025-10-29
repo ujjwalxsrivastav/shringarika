@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shringarika</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="splash-screen">
+        <div class="container">
+            <img class="back" src="back.png" alt="Background" />
+            <img class="bani" src="bani.png" alt="Profile" />
+            <img class="logo" src="shringarika.png" alt="Shringarika" />
+            <img class="tagline" src="neech.png" alt="Women's Indian wear" />
+        </div>
+    </div>
+
+    <script>
+        // Wait for all animations to complete (2.5 seconds) then redirect
+        setTimeout(() => {
+            window.location.href = 'main.html';
+        }, 3500); 
+        // 3.5 seconds total to account for all animations
+        
+       
+  // Detect if it's desktop
+        if (!/Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    // Agar mobile nahi hai to direct main site pe redirect kar de
+    window.location.href = "main.html";
+  }
+
+    
+    </script>
+</body>
+</html>
