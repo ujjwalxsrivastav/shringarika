@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shringarika - Main</title>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
         body {
             margin: 0;
             padding: 0;
@@ -37,7 +42,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 1;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .content-wrapper {
@@ -48,7 +54,7 @@
             align-items: flex-start;
             padding-left: 28px;
             padding-top: 149px;
-            z-index: 2;
+            z-index: 10;
         }
 
         .Rectangle2 {
@@ -61,7 +67,7 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .Rectangle2:hover {
@@ -103,6 +109,7 @@
             gap: 22px;
             width: 100%;
             align-items: center;
+            z-index: 100;
         }
 
         .Skip {
@@ -114,7 +121,7 @@
             margin-top: 20px;
             text-align: center;
             transition: color 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .Skip:hover {
@@ -160,6 +167,8 @@
                 width: 100%;
                 height: auto;
                 min-height: 100%;
+                z-index: 0;
+                pointer-events: none;
             }
 
             .container {
@@ -176,7 +185,7 @@
 
             .content-wrapper {
                 position: relative;
-                z-index: 2;
+                z-index: 10;
             }
 
             .Rectangle2 {
@@ -184,6 +193,7 @@
                 position: relative;
                 width: 264px;
                 height: 54px;
+                z-index: 999;
             }
 
             .Rectangle2 svg {
@@ -223,6 +233,7 @@
                 padding-right: 0;
                 width: 100%;
                 align-items: center;
+                z-index: 1000;
             }
         }
     </style>
@@ -262,39 +273,40 @@
     </div>
 
     <script>
-        // Sign Up Button Click Event - Mobile optimized
-        document.getElementById('signupBtn').addEventListener('click', function(e) {
+        function navigateToPage(url) {
+            window.location.href = url;
+        }
+
+        // Sign Up Button
+        var signupBtn = document.getElementById('signupBtn');
+        signupBtn.addEventListener('click', function() {
+            navigateToPage('signup.html');
+        });
+        signupBtn.addEventListener('touchend', function(e) {
             e.preventDefault();
-            window.location.href = 'signup.html';
+            navigateToPage('signup.html');
         });
 
-        // Log In Button Click Event - Mobile optimized
-        document.getElementById('loginBtn').addEventListener('click', function(e) {
+        // Log In Button
+        var loginBtn = document.getElementById('loginBtn');
+        loginBtn.addEventListener('click', function() {
+            navigateToPage('login.html');
+        });
+        loginBtn.addEventListener('touchend', function(e) {
             e.preventDefault();
-            window.location.href = 'login.html';
+            navigateToPage('login.html');
         });
 
-        // Skip Button Click Event
-        document.getElementById('skipBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'home.html';
+        // Skip Button
+        var skipBtn = document.getElementById('skipBtn');
+        skipBtn.addEventListener('click', function() {
+            navigateToPage('home.html');
         });
-
-        // Add touch event support for better mobile compatibility
-        document.getElementById('signupBtn').addEventListener('touchstart', function(e) {
+        skipBtn.addEventListener('touchend', function(e) {
             e.preventDefault();
-            window.location.href = 'signup.html';
-        }, {passive: false});
-
-        document.getElementById('loginBtn').addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            window.location.href = 'login.html';
-        }, {passive: false});
-
-        document.getElementById('skipBtn').addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            window.location.href = 'home.html';
-        }, {passive: false});
+            navigateToPage('home.html');
+        });
     </script>
 </body>
 </html>
+
