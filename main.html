@@ -61,6 +61,7 @@
             align-items: center;
             cursor: pointer;
             transition: transform 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .Rectangle2:hover {
@@ -78,6 +79,7 @@
             width: 100%;
             height: 100%;
             z-index: 1;
+            pointer-events: none;
         }
 
         .SignUp, .LogIn {
@@ -90,6 +92,7 @@
             text-align: center;
             z-index: 2;
             pointer-events: none;
+            user-select: none;
         }
 
         .buttons-container {
@@ -111,6 +114,7 @@
             margin-top: 20px;
             text-align: center;
             transition: color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .Skip:hover {
@@ -189,6 +193,7 @@
                 width: 100%;
                 height: 100%;
                 z-index: 1;
+                pointer-events: none;
             }
 
             .SignUp, .LogIn {
@@ -257,20 +262,39 @@
     </div>
 
     <script>
-        // Sign Up Button Click Event
-        document.getElementById('signupBtn').addEventListener('click', function() {
+        // Sign Up Button Click Event - Mobile optimized
+        document.getElementById('signupBtn').addEventListener('click', function(e) {
+            e.preventDefault();
             window.location.href = 'signup.html';
         });
 
-        // Log In Button Click Event
-        document.getElementById('loginBtn').addEventListener('click', function() {
+        // Log In Button Click Event - Mobile optimized
+        document.getElementById('loginBtn').addEventListener('click', function(e) {
+            e.preventDefault();
             window.location.href = 'login.html';
         });
 
         // Skip Button Click Event
-        document.getElementById('skipBtn').addEventListener('click', function() {
+        document.getElementById('skipBtn').addEventListener('click', function(e) {
+            e.preventDefault();
             window.location.href = 'home.html';
         });
+
+        // Add touch event support for better mobile compatibility
+        document.getElementById('signupBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            window.location.href = 'signup.html';
+        }, {passive: false});
+
+        document.getElementById('loginBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            window.location.href = 'login.html';
+        }, {passive: false});
+
+        document.getElementById('skipBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            window.location.href = 'home.html';
+        }, {passive: false});
     </script>
 </body>
 </html>
