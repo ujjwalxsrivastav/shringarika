@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shringarika - Sign Up</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -217,17 +222,22 @@
             <form id="signupForm">
                 <!-- Name Input -->
                 <div class="input-group">
-                    <input type="text" class="input-field" placeholder="Name" required>
+                    <input type="text" class="input-field" id="nameInput" placeholder="Name" required>
                 </div>
 
                 <!-- Email Input -->
                 <div class="input-group">
-                    <input type="email" class="input-field" placeholder="Email" required>
+                    <input type="email" class="input-field" id="emailInput" placeholder="Email" required>
                 </div>
 
                 <!-- Password Input -->
                 <div class="input-group">
-                    <input type="password" class="input-field" placeholder="Password" required>
+                    <input type="password" class="input-field" id="passwordInput" placeholder="Password (min 6 characters)" required>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div class="input-group">
+                    <input type="password" class="input-field" id="confirmPasswordInput" placeholder="Confirm Password" required>
                 </div>
 
                 <!-- Continue Button -->
@@ -253,11 +263,122 @@
     </div>
 
     <script>
+        // Wait for Firebase to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            window.firebaseAuth.onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is already signed in, redirect to home
+                    window.location.href = 'home.html';
+                }
+            });
+        });
+
         // Form submission handler
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            console.log('Form submitted');
-            // Add your form submission logic here
+            
+            console.log('🚀 Signup form submitted');
+            
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+            
+            console.log('📝 Form data:', { name, email, passwordLength: password.length });
+            
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            const button = e.target.querySelector('.continue-button');
+            const originalText = button.textContent;
+            button.textContent = 'Creating account...';
+            button.disabled = true;
+            
+            console.log('🔥 Starting Firebase signup...');
+            
+            try {
+                // Check if Firebase is available
+                if (!window.firebaseAuth) {
+                    throw new Error('Firebase Auth not available');
+                }
+                
+                console.log('✅ Firebase Auth available, creating user...');
+                
+                // Create user with email and password
+                const userCredential = await window.firebaseAuth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ User created successfully:', user.uid);
+                
+                // Update user profile with display name
+                await user.updateProfile({
+                    displayName: name
+                });
+                
+                console.log('✅ Profile updated with name');
+                
+                // Save user data to Firestore
+                await window.firebaseDb.collection('users').doc(user.uid).set({
+                    name: name,
+                    email: email,
+                    createdAt: new Date(),
+                    uid: user.uid
+                });
+                
+                console.log('✅ User data saved to Firestore');
+                
+                alert('Account created successfully!');
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                console.error('❌ Signup error:', error);
+                console.error('❌ Error code:', error.code);
+                console.error('❌ Error message:', error.message);
+                
+                let errorMessage = 'Failed to create account. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password is too weak. Please choose a stronger password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address. Please check and try again.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection and try again.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
         });
 
         // Back button handler
@@ -266,13 +387,42 @@
         });
 
         // Google login handler
-        document.getElementById('googleLogin').addEventListener('click', function() {
-            console.log('Google login clicked');
-            // Add Google OAuth logic here
+        document.getElementById('googleLogin').addEventListener('click', async function() {
+            const button = this;
+            const originalText = button.textContent;
+            button.textContent = 'Signing in...';
+            button.disabled = true;
+            
+            try {
+                const result = await window.firebaseAuth.signInWithPopup(window.googleProvider);
+                const user = result.user;
+                
+                // Save user data to Firestore if not already exists
+                const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    await window.firebaseDb.collection('users').doc(user.uid).set({
+                        name: user.displayName || 'Google User',
+                        email: user.email,
+                        createdAt: new Date(),
+                        uid: user.uid,
+                        provider: 'google'
+                    });
+                }
+                
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                console.error('Google signup error:', error);
+                alert('Failed to sign up with Google. Please try again.');
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
         });
 
         // Apple login handler
         document.getElementById('appleLogin').addEventListener('click', function() {
+            alert('Apple Sign In will be available soon!');
             console.log('Apple login clicked');
             // Add Apple OAuth logic here
         });

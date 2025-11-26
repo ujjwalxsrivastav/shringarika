@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shringarika - Log In</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -322,11 +327,22 @@
     </div>
 
     <script>
+        // Wait for Firebase to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in
+            window.firebaseAuth.onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is already signed in, redirect to home
+                    window.location.href = 'home.html';
+                }
+            });
+        });
+
         // Form submission handler
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const email = document.getElementById('emailInput').value;
+            const email = document.getElementById('emailInput').value.trim();
             const password = document.getElementById('passwordInput').value;
             
             // Basic validation
@@ -342,10 +358,51 @@
                 return;
             }
             
-            console.log('Login attempt with:', email);
-            // Add your login logic here
-            // For example: redirect to home page after successful login
-            // window.location.href = 'home.html';
+            const button = e.target.querySelector('.continue-button');
+            const originalText = button.textContent;
+            button.textContent = 'Signing in...';
+            button.disabled = true;
+            
+            try {
+                // Sign in with email and password
+                const userCredential = await window.firebaseAuth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('Login successful:', user.email);
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Failed to sign in. Please check your credentials and try again.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email address. Please sign up first.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect password. Please try again or reset your password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address. Please check and try again.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been disabled. Please contact support.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many failed attempts. Please try again later or reset your password.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection and try again.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
         });
 
         // Sign up link handler
@@ -354,20 +411,83 @@
         });
 
         // Forgot password handler
-        document.getElementById('forgotPasswordLink').addEventListener('click', function() {
-            alert('Password reset link will be sent to your email');
-            // Add your forgot password logic here
-            // window.location.href = 'forgot-password.html';
+        document.getElementById('forgotPasswordLink').addEventListener('click', async function() {
+            const email = document.getElementById('emailInput').value.trim();
+            
+            if (!email) {
+                alert('Please enter your email address first');
+                return;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            try {
+                await window.firebaseAuth.sendPasswordResetEmail(email);
+                alert('Password reset link has been sent to your email address!');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                let errorMessage = 'Failed to send password reset email.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email address.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                    default:
+                        errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
+            }
         });
 
         // Google login handler
-        document.getElementById('googleLogin').addEventListener('click', function() {
-            console.log('Google login clicked');
-            // Add Google OAuth logic here
+        document.getElementById('googleLogin').addEventListener('click', async function() {
+            const button = this;
+            const originalText = button.textContent;
+            button.textContent = 'Signing in...';
+            button.disabled = true;
+            
+            try {
+                const result = await window.firebaseAuth.signInWithPopup(window.googleProvider);
+                const user = result.user;
+                
+                // Save user data to Firestore if not already exists
+                const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    await window.firebaseDb.collection('users').doc(user.uid).set({
+                        name: user.displayName || 'Google User',
+                        email: user.email,
+                        createdAt: new Date(),
+                        uid: user.uid,
+                        provider: 'google'
+                    });
+                }
+                
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                console.error('Google login error:', error);
+                if (error.code === 'auth/popup-closed-by-user') {
+                    alert('Google sign-in was cancelled. Please try again.');
+                } else {
+                    alert('Failed to sign in with Google. Please try again.');
+                }
+            } finally {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
         });
 
         // Apple login handler
         document.getElementById('appleLogin').addEventListener('click', function() {
+            alert('Apple Sign In will be available soon!');
             console.log('Apple login clicked');
             // Add Apple OAuth logic here
         });
