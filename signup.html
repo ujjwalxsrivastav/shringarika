@@ -388,32 +388,79 @@
 
         // Google login handler
         document.getElementById('googleLogin').addEventListener('click', async function() {
+            console.log('🔍 Google Sign-In clicked');
             const button = this;
             const originalText = button.textContent;
             button.textContent = 'Signing in...';
             button.disabled = true;
             
             try {
+                // Check if Firebase is available
+                if (!window.firebaseAuth) {
+                    throw new Error('Firebase Auth not available');
+                }
+                
+                if (!window.googleProvider) {
+                    throw new Error('Google Provider not configured');
+                }
+                
+                console.log('✅ Firebase and Google Provider available, starting sign-in...');
+                
                 const result = await window.firebaseAuth.signInWithPopup(window.googleProvider);
                 const user = result.user;
+                
+                console.log('✅ Google Sign-In successful:', user.uid);
+                console.log('📧 User email:', user.email);
+                console.log('👤 User name:', user.displayName);
                 
                 // Save user data to Firestore if not already exists
                 const userDoc = await window.firebaseDb.collection('users').doc(user.uid).get();
                 if (!userDoc.exists) {
+                    console.log('💾 Saving new user data to Firestore...');
                     await window.firebaseDb.collection('users').doc(user.uid).set({
                         name: user.displayName || 'Google User',
                         email: user.email,
                         createdAt: new Date(),
                         uid: user.uid,
-                        provider: 'google'
+                        provider: 'google',
+                        photoURL: user.photoURL
                     });
+                    console.log('✅ User data saved to Firestore');
+                } else {
+                    console.log('📋 User already exists in Firestore');
                 }
                 
+                alert('Signed in with Google successfully!');
                 window.location.href = 'home.html';
                 
             } catch (error) {
-                console.error('Google signup error:', error);
-                alert('Failed to sign up with Google. Please try again.');
+                console.error('❌ Google Sign-In error:', error);
+                console.error('❌ Error code:', error.code);
+                console.error('❌ Error message:', error.message);
+                
+                let errorMessage = 'Failed to sign in with Google. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'Sign-in popup was closed before completion. Please try again.';
+                        break;
+                    case 'auth/popup-blocked':
+                        errorMessage = 'Sign-in popup was blocked by browser. Please allow popups and try again.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        errorMessage = 'Sign-in was cancelled. Please try again.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your internet connection and try again.';
+                        break;
+                    case 'auth/unauthorized-domain':
+                        errorMessage = 'This domain is not authorized for Google Sign-In. Please check Firebase console settings.';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+                
+                alert(errorMessage);
             } finally {
                 button.textContent = originalText;
                 button.disabled = false;
